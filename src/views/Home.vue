@@ -33,10 +33,10 @@
           <button><img src="../assets/img/Plus.png" alt=""></button>
         </div>
       </form>
-        <div class="row">
-          <a class="btn btn-sort"> All </a>
-          <a class="btn btn-sort"> Important </a>
-          <a class="btn btn-sort"> Unread </a>
+        <div class="row mx-auto">
+          <button class="btn headchat mx-auto"> All </button>
+          <button class="btn headchat mx-auto"> Important</button>
+          <button class="btn headchat mx-auto"> Unread </button>
         </div>
 
       <hr>
@@ -78,7 +78,7 @@
               </div>
             </div>
             </div>
-              <form @submit.prevent="sendMessage()">
+              <form @submit.prevent="sendMessage">
                 <div class="form m-3">
                   <input type="text" class="form-control" placeholder="Type message here ..." v-model="message">
                   <button><img src="../assets/img/Plus.png" alt=""></button>
@@ -139,6 +139,8 @@ export default {
         receiver: this.userReceiver,
         message: msg
       }]
+      console.log(msg)
+      console.log(this.listMessage)
       this.socket.emit('send-message', {
         sender: this.username,
         receiver: this.userReceiver,
@@ -173,7 +175,6 @@ export default {
     })
   }
 }
-
 </script>
 
 <style scoped>
@@ -219,7 +220,7 @@ input[type="text"]:focus {
   outline: none;
   background-color: transparent;
 }
-/* Sidebar */
+
 .sidebar-page {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -259,10 +260,7 @@ input[type="text"]:focus {
   background-color:  #7E98DF;
   color: #FAFAFA;
 }
-.btn-sort {
-  margin: auto;
-}
-.btn-sort:active, .btn-sort:hover {
+.headchat:active, .headchat:hover {
   background-color:  #7E98DF;
   color: #fff !important;
   border-radius: 15px;
@@ -274,17 +272,5 @@ input[type="text"]:focus {
 .prof-pic {
   height: 60px;
   border-radius: 20px;
-}
-@media(max-width: 576px) {
-  .chat-page {
-  margin-left: 0px;
-  height: 100%;
-  }
-  .sidebar-page {
-    height: 100vh;
-  }
-  .chat-room {
-  height: 430px;
-  }
 }
 </style>

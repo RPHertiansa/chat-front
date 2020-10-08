@@ -6,7 +6,7 @@
         <div class="row">
           <div class="col-lg-1 col-1">
             <router-link to="/login">
-              <button class="btn btn-danger">back</button>
+              <button class="btn"><img src="../assets/img/back.png" alt=""></button>
             </router-link>
           </div>
           <div class="col-lg-11 col-11">
@@ -118,15 +118,15 @@ export default {
   border-width: 1px;
 }
 .btn-register {
-  background: #7E98DF;
-  border-radius: 50px;
-  color: #ffffff;
-  padding: 15px;
+  background: #7E98DF !important;
+  border-radius: 50px !important;
+  color: #ffffff !important;
+  padding: 15px !important;
 }
 .btn-google {
-  border-radius: 50px;
-  color: #7E98DF;
-  padding: 15px;
-  border: 2px solid #7E98DF;
+  border-radius: 50px !important;
+  color: #7E98DF !important;
+  padding: 15px !important;
+  border: 2px solid #7E98DF !important;
 }
 </style>
