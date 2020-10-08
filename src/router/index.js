@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Splash from '../views/Splash.vue'
 import Register from '../views/Register.vue'
 import store from '../store'
+import Map from '../views/Map.vue'
 
 Vue.use(VueRouter)
 
@@ -28,7 +29,13 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/map',
+    name: 'Map',
+    component: Map
   }
+
 ]
 
 const router = new VueRouter({

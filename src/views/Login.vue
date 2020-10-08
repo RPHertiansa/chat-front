@@ -8,7 +8,7 @@
 
         <div class="md-form">
           <label for="text">Username</label>
-          <input type="text" v-model="username" id="email" class="form-control">
+          <input type="text" v-model="username" id="text" class="form-control">
         </div>
 
         <div class="md-form" style="">

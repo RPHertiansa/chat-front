@@ -1,8 +1,9 @@
 <template>
-  <div class="container-fluid">
-    <div class="row">
+    <div class="container-fluid">
+      <div class="home">
+        <div class="row">
       <div class="sidebar-page col-lg-3">
-    <div class="container mt-2">
+      <div class="container">
       <b-row>
         <b-col>
           <router-link to="/home">
@@ -29,7 +30,7 @@
       <form >
         <div class="form">
           <button><b-icon icon="search" variant="secondary"></b-icon></button>
-          <input type="text" class="form-control" placeholder="Search here" v-model="keyword" />
+          <input type="text" class="form-control" placeholder="Search here"/>
           <button><img src="../assets/img/Plus.png" alt=""></button>
         </div>
       </form>
@@ -42,11 +43,10 @@
       <hr>
       <div class="list-contact" v-for="(item, index) in userList" :key="index">
         <div v-if="username !== item.username">
-          <div class="contact-person form-inline" @click="selectUser(item.username), selectImage(item.image), selectId(item.id)">
+          <div class="contact-person form-inline" @click="selectUser(item.username), selectImage(item.image)">
             <img :src="`${url}${item.image}`" alt="photo" class="pl-2 prof-pic">
               <div class="info ml-2 pt-2">
                 <b>{{item.name}}</b>
-                <p class="small tele-text mt-2">Hello world</p>
               </div>
             </div>
             <hr>
@@ -57,7 +57,7 @@
   <div class="col-lg-9">
     <div class="chat-page">
       <div v-if="userReceiver === null || userReceiverImage === null">
-        <p class="text-muted text-center mt-5">Please select a chat to start messaging</p>
+        <p class="text-muted text-center mt-5">Please select a user to start chatting</p>
       </div>
       <div v-else>
         <div class="header-info form-inline" v-b-toggle.friend-info>
@@ -67,20 +67,10 @@
               </div>
         </div>
           <div class="chat-room">
-            <div v-if="userReceiver">
-              <div v-for="(item, index) in privateMessages" :key="index">
-                {{item.message}}
-              </div>
-            </div>
-            <div v-else>
-              <div v-for="(item, index) in listMessage" :key="index">
-                {{item.message}}
-              </div>
-            </div>
-            </div>
-              <form @submit.prevent="sendMessage">
+          </div>
+              <form>
                 <div class="form m-3">
-                  <input type="text" class="form-control" placeholder="Type message here ..." v-model="message">
+                  <input type="text" class="form-control" placeholder="Type your message here ..." v-model="message">
                   <button><img src="../assets/img/Plus.png" alt=""></button>
                   <button><img src="../assets/img/emoji.png" alt=""></button>
                   <button><img src="../assets/img/square.png" alt=""></button>
@@ -89,8 +79,9 @@
           </div>
         </div>
       </div>
+        </div>
+      </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -108,10 +99,8 @@ export default {
       url: URL_SOCKET,
       userReceiver: null,
       userReceiverImage: null,
-      listUsers: [],
       listMessage: [],
-      privateMessages: [],
-      keyword: null
+      privateMessages: []
     }
   },
   methods: {
@@ -120,64 +109,28 @@ export default {
       localStorage.removeItem('refreshtoken')
       localStorage.removeItem('username')
       window.location = '/login'
-    },
-    selectUser (user) {
-      this.userReceiver = user
-      const privateMessage = this.listMessage.filter((n) => n.sender === n.userReceiver || n.sender === n.username)
-      this.privateMessages = privateMessage
-    },
-    selectImage (image) {
-      this.userReceiverImage = image
-    },
-    selectId (iduser) {
-      localStorage.setItem('receiver', iduser)
-    },
-    sendMessage () {
-      const msg = `${this.username} : ${this.message}`
-      this.listMessage = [...this.listMessage, {
-        sender: this.username,
-        receiver: this.userReceiver,
-        message: msg
-      }]
-      console.log(msg)
-      console.log(this.listMessage)
-      this.socket.emit('send-message', {
-        sender: this.username,
-        receiver: this.userReceiver,
-        message: msg
-      })
-      this.message = ''
     }
+
   },
   mounted () {
+    this.socket.on('connection', (data) => {
+      this.connections = data
+    })
     this.socket.emit('get-all-users', [])
     this.socket.on('userList', (data) => {
       this.userList = data
     })
 
-    this.socket.on('connection', (data) => {
-      this.connections = data
-    })
 
-    this.socket.emit('join-room', {
-      user: this.username
-    })
-    this.socket.on('list-messages', (data) => {
-      this.listMessage = [...this.listMessage, data]
-      const privateMessage = this.listMessage.filter((e) => e.sender === e.userReceiver || e.sender === e.username)
-      this.privateMessages = privateMessage
-    })
-    this.socket.on('typing', (username) => {
-      this.typing = username
-    })
-    this.socket.on('stopTyping', () => {
-      this.typing = false
-    })
   }
 }
 </script>
 
 <style scoped>
+.home {
+  height: 100vh;
+  background-color: #FAFAFA;
+}
 .text-empty {
   position: absolute;
   left: 50%;

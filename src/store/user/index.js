@@ -24,11 +24,11 @@ const actions = {
         email: payload.email,
         password: payload.password
       })
-        .then((response) => {
-          resolve(response.data.message)
+        .then((result) => {
+          resolve(result.data.message)
         })
         .catch((err) => {
-          console.log(err)
+          reject(new Error(err))
         })
     })
   },
