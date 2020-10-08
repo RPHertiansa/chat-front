@@ -17,6 +17,21 @@ const getters = {
 }
 
 const actions = {
+  onRegister: (context, payload) => {
+    return new Promise((resolve, reject) => {
+      axios.post(`${URL}/users/register`, {
+        name: payload.name,
+        email: payload.email,
+        password: payload.password
+      })
+        .then((response) => {
+          resolve(response.data.message)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+  },
   onLogin: (context, payload) => {
     return new Promise((resolve, reject) => {
       axios.post(`${URL}/users/login`, {
@@ -25,6 +40,8 @@ const actions = {
       }).then(result => {
         resolve(result.data.message)
         localStorage.setItem('token', result.data.data.token)
+        localStorage.setItem('refreshtoken', result.data.data.refreshtoken)
+        localStorage.setItem('username', result.data.data.username)
       }).catch(err => {
         console.log(err)
       })
