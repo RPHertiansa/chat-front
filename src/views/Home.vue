@@ -42,8 +42,8 @@
 
       <hr>
       <div class="list-contact" v-for="(item, index) in userList" :key="index">
-        <div v-if="username !== item.username">
-          <div class="contact-person form-inline" @click="selectUser(item.username), selectImage(item.image)">
+        <div v-if="sender !== item.username">
+          <div class="contact-person form-inline" @click="selectUser(item.username, item.image)">
             <img :src="`${url}${item.image}`" alt="photo" class="pl-2 prof-pic">
               <div class="info ml-2 pt-2">
                 <b>{{item.name}}</b>
@@ -56,19 +56,39 @@
   </div>
   <div class="col-lg-9">
     <div class="chat-page">
-      <div v-if="userReceiver === null || userReceiverImage === null">
+      <div v-if="receiver === null">
         <p class="text-muted text-center mt-5">Please select a user to start chatting</p>
       </div>
       <div v-else>
         <div class="header-info form-inline" v-b-toggle.friend-info>
-              <img :src="`${url}${userReceiverImage}`" alt="photo" class="m-2 prof-pic">
+              <img :src="`${url}${receiverImg}`" alt="photo" class="m-2 prof-pic">
               <div class="info ml-3">
-                <b>{{userReceiver}}</b>
+                <b>{{receiver}}</b>
               </div>
         </div>
           <div class="chat-room">
+              <div  v-for="(item, index) in historyMsg" :key="`a`+index" class="msg-sent ">
+                <div  v-if="item.sender === sender">
+                  <div class="text-right bg-success">
+                    {{item.message}}
+                  </div>
+                </div>
+                <div v-else class="text-left bg-warning">
+                    {{item.message}}
+                </div>
+              </div>
+              <div  v-for="(item, index) in privateChat" :key="index" class=" msg-sent ">
+                <div  v-if="item.sender === sender">
+                  <div class="text-right bg-success">
+                    {{item.message}}
+                  </div>
+                </div>
+                <div v-else class="text-left bg-warning">
+                    {{item.msg}}
+                </div>
+              </div>
           </div>
-              <form>
+              <form @submit.prevent="sendMessage">
                 <div class="form m-3">
                   <input type="text" class="form-control" placeholder="Type your message here ..." v-model="message">
                   <button><img src="../assets/img/Plus.png" alt=""></button>
@@ -92,15 +112,17 @@ export default {
   name: 'Home',
   data () {
     return {
-      username: localStorage.getItem('username'),
+      sender: localStorage.getItem('username'),
       message: '',
       socket: io(`${URL_SOCKET}`),
       userList: [],
       url: URL_SOCKET,
-      userReceiver: null,
-      userReceiverImage: null,
+      receiver: null,
+      receiverImg: null,
       listMessage: [],
-      privateMessages: []
+      historyMsg: [],
+      privateChat: [],
+      receivedMsg: null
     }
   },
   methods: {
@@ -109,19 +131,65 @@ export default {
       localStorage.removeItem('refreshtoken')
       localStorage.removeItem('username')
       window.location = '/login'
+    },
+    async selectUser (user, image) {
+      this.receiver = user
+      this.receiverImg = image
+      this.setPrivateChat()
+      await this.socket.emit('get-history', {
+        sender: this.sender,
+        receiver: this.receiver
+      })
+      this.getHistoryMessage()
+    },
+    sendMessage () {
+      const chat = {
+        sender: this.sender,
+        receiver: this.receiver,
+        message: this.message
+      }
+
+      this.listMessage = [...this.listMessage, chat]
+
+      this.socket.emit('send-message', {
+        sender: this.sender,
+        receiver: this.receiver,
+        message: this.message
+      })
+      this.message = ''
+      this.setPrivateChat()
+    },
+    getHistoryMessage () {
+      this.socket.on('historyMessage', (payload) => {
+        this.historyMsg = payload
+      })
+    },
+    setPrivateChat () {
+      const privateChats = this.listMessage.filter(e => {
+        if (this.receiver === null) {
+          return e.sender === this.receiver || e.sender === this.sender
+        } else {
+          return e.receiver === this.receiver || e.sender === this.receiver
+        }
+      })
+      this.privateChat = privateChats
     }
 
   },
   mounted () {
-    this.socket.on('connection', (data) => {
-      this.connections = data
-    })
     this.socket.emit('get-all-users', [])
-    this.socket.on('userList', (data) => {
-      this.userList = data
+    this.socket.on('userList', (payload) => {
+      this.userList = payload
     })
 
+    this.socket.emit('join-room', this.sender)
 
+    this.socket.on('private-message', (payload) => {
+      this.listMessage = [...this.listMessage, payload]
+      if (this.receiver !== null) {
+        this.setPrivateChat()
+      }
+    })
   }
 }
 </script>
