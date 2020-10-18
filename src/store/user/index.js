@@ -40,7 +40,8 @@ const actions = {
       }).then(result => {
         resolve(result.data.message)
         localStorage.setItem('token', result.data.data.token)
-        localStorage.setItem('refreshtoken', result.data.data.refreshtoken)
+        localStorage.setItem('refreshToken', result.data.data.refreshToken)
+        localStorage.setItem('name', result.data.data.name)
         localStorage.setItem('username', result.data.data.username)
       }).catch(err => {
         console.log(err)

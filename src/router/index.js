@@ -13,7 +13,8 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: { requiresAuth: true }
   },
   {
     path: '/',
@@ -33,7 +34,8 @@ const routes = [
   {
     path: '/map',
     name: 'Map',
-    component: Map
+    component: Map,
+    meta: { requiresAuth: true }
   }
 
 ]

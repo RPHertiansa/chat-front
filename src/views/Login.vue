@@ -76,27 +76,36 @@ export default {
       }
       this.onLogin(userData)
         .then((response) => {
-          if (response !== 'Login Success') {
+          if (response === 'Need Activation') {
             localStorage.removeItem('token')
-            localStorage.removeItem('refreshtoken')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('name')
             localStorage.removeItem('username')
-            this.swalAlert()
+            this.needActivation()
+          } else if (response !== 'Login Success') {
+            localStorage.removeItem('token')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('name')
+            localStorage.removeItem('username')
+            this.failedLogin()
           } else {
             this.socket.emit('notification', this.username)
-            this.$router.push({
-              path: '/home',
-              query: {
-                username: this.username
-              }
-            })
+            window.location = '/home'
           }
         })
     },
-    swalAlert () {
+    failedLogin () {
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
         text: 'Please check your username or password!'
+      })
+    },
+    needActivation () {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Unverified Account',
+        text: 'Please check your email to verify your account!'
       })
     }
   }

@@ -5,6 +5,30 @@ import store from './store'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { URL } from './helpers/env'
+import axios from 'axios'
+
+axios.defaults.headers = {
+  token: localStorage.getItem('token')
+}
+
+axios.interceptors.response.use((response) => {
+  if (response.data.message === 'Token Expired! Please log in again') {
+    return new Promise((resolve, reject) => {
+      axios.post(`${URL}/users/refreshToken`, {
+        refreshToken: localStorage.getItem('refreshToken')
+      })
+        .then(res => {
+          resolve()
+          localStorage.setItem('token', res.data.data.token)
+          window.location = '/home'
+        })
+        .catch(err => reject(err.message))
+    })
+  } else {
+    return response
+  }
+})
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)

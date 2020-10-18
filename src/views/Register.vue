@@ -82,13 +82,19 @@ export default {
       }
       this.onRegister(userData)
         .then((response) => {
-          if (response === 'You are registered') {
+          if (response === 'Success Registration, Please activate your email') {
             Swal.fire({
               icon: 'success',
               title: 'You are registered!',
               text: 'Please check your email to activate your account!'
             })
             window.location = '/login'
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Duplicate Email',
+              text: 'Please use different email as this one is already registered'
+            })
           }
         })
         .catch((err) => {

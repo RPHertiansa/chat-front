@@ -41,9 +41,9 @@
         </div>
 
       <hr>
-      <div class="list-contact" v-for="(item, index) in userList" :key="index">
-        <div v-if="sender !== item.username">
-          <div class="contact-person form-inline" @click="selectUser(item.username, item.image)">
+      <div class="list-contact" v-for="(item, index) in friendList" :key="index">
+        <div v-if="sender !== item.name">
+          <div class="contact-person form-inline" @click="selectUser(item.name, item.image)">
             <img :src="`${url}${item.image}`" alt="photo" class="pl-2 prof-pic">
               <div class="info ml-2 pt-2">
                 <b>{{item.name}}</b>
@@ -57,7 +57,7 @@
   <div class="col-lg-9">
     <div class="chat-page">
       <div v-if="receiver === null">
-        <p class="text-muted text-center mt-5">Please select a user to start chatting</p>
+        <p class="text-muted empty-chat">Please select a user to start chatting</p>
       </div>
       <div v-else>
         <div class="header-info form-inline" v-b-toggle.friend-info>
@@ -67,23 +67,23 @@
               </div>
         </div>
           <div class="chat-room">
-              <div  v-for="(item, index) in historyMsg" :key="`a`+index" class="msg-sent ">
+              <div  v-for="(item, index) in historyMsg" :key="`a`+index">
                 <div  v-if="item.sender === sender">
-                  <div class="text-right bg-success">
+                  <div class="msg-sent text-right ml-auto">
                     {{item.message}}
                   </div>
                 </div>
-                <div v-else class="text-left bg-warning">
+                <div v-else class="msg-received text-left">
                     {{item.message}}
                 </div>
               </div>
-              <div  v-for="(item, index) in privateChat" :key="index" class=" msg-sent ">
+              <div  v-for="(item, index) in privateChat" :key="index">
                 <div  v-if="item.sender === sender">
-                  <div class="text-right bg-success">
+                  <div class="msg-sent text-right ml-auto">
                     {{item.message}}
                   </div>
                 </div>
-                <div v-else class="text-left bg-warning">
+                <div v-else class="msg-received text-left">
                     {{item.msg}}
                 </div>
               </div>
@@ -112,10 +112,11 @@ export default {
   name: 'Home',
   data () {
     return {
-      sender: localStorage.getItem('username'),
+      sender: localStorage.getItem('name'),
+      username: localStorage.getItem('username'),
       message: '',
       socket: io(`${URL_SOCKET}`),
-      userList: [],
+      friendList: [],
       url: URL_SOCKET,
       receiver: null,
       receiverImg: null,
@@ -128,8 +129,8 @@ export default {
   methods: {
     onLogout () {
       localStorage.removeItem('token')
-      localStorage.removeItem('refreshtoken')
-      localStorage.removeItem('username')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('name')
       window.location = '/login'
     },
     async selectUser (user, image) {
@@ -177,9 +178,9 @@ export default {
 
   },
   mounted () {
-    this.socket.emit('get-all-users', [])
-    this.socket.on('userList', (payload) => {
-      this.userList = payload
+    this.socket.emit('get-all-friends', { username: this.username })
+    this.socket.on('friendList', (payload) => {
+      this.friendList = payload
     })
 
     this.socket.emit('join-room', this.sender)
@@ -199,11 +200,7 @@ export default {
   height: 100vh;
   background-color: #FAFAFA;
 }
-.text-empty {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-}
+
 .chat-page {
   margin-left: -15px;
   height: 100vh;
@@ -293,5 +290,25 @@ input[type="text"]:focus {
 .prof-pic {
   height: 60px;
   border-radius: 20px;
+}
+.msg-sent {
+  background-color: #7E98DF;
+  color: white;
+  margin: 10px;
+  margin-right: 10px;
+  border-radius: 35px 35px 10px  35px;
+  padding:20px;
+  width:fit-content;
+}
+.msg-received {
+  background-color: #FFFFFF;
+  margin: 10px;
+  margin-left:10px;
+  border-radius: 35px 35px 35px 10px;
+  padding:20px;
+  width:fit-content
+}
+.empty-chat {
+  margin-top: 300px;
 }
 </style>
