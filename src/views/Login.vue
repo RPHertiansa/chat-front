@@ -77,12 +77,14 @@ export default {
       this.onLogin(userData)
         .then((response) => {
           if (response === 'Need Activation') {
+            localStorage.removeItem('iduser')
             localStorage.removeItem('token')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('name')
             localStorage.removeItem('username')
             this.needActivation()
           } else if (response !== 'Login Success') {
+            localStorage.removeItem('iduser')
             localStorage.removeItem('token')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('name')
