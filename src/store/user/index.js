@@ -6,6 +6,9 @@ const state = () => {
       data: [],
       isLoading: false
     },
+    friend: {
+      data: []
+    },
     token: localStorage.getItem('token') || null
   }
 }
@@ -20,12 +23,18 @@ const getters = {
   },
   userDetail (state) {
     return state.all
+  },
+  friendDetail (state) {
+    return state.friend
   }
 }
 
 const mutations = {
   SET_ALL_DATA (state, payload) {
     state.all.data = payload
+  },
+  SET_FRIENDS_DATA (state, payload) {
+    state.friend.data = payload
   }
 }
 
@@ -84,12 +93,35 @@ const actions = {
         })
     })
   },
+  getFriendsDetail: (context, payload) => {
+    return new Promise((resolve, reject) => {
+      axios.get(`${URL}/users/getdetail/${payload}`)
+        .then((result) => {
+          context.commit('SET_FRIENDS_DATA', result.data.data[0])
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+  },
   update: (context, payload) => {
     const iduser = localStorage.getItem('iduser')
     return new Promise((resolve, reject) => {
       axios.patch(`${URL}/users/update/${iduser}`, payload)
         .then((result) => {
           console.log(result.data.message)
+          resolve(result.data.message)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
+  addFriends: (context, payload) => {
+    // const username = localStorage.getItem('username')
+    return new Promise((resolve, reject) => {
+      axios.post(`${URL}/friends/addfriends`, payload)
+        .then((result) => {
           resolve(result.data.message)
         })
         .catch((err) => {

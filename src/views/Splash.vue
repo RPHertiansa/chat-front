@@ -8,7 +8,7 @@
 
 <style scoped>
 .logo{
-  margin-top: 200px;
+  margin-top: 100px;
 }
 .logo:hover{
   transform: rotate(20deg)

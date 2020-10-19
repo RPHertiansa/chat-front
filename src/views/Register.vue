@@ -107,6 +107,7 @@ export default {
 <style>
 
 .main-page {
+  margin-top: -50px;
   padding-top: 20px;
 }
 .register {

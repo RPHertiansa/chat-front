@@ -114,8 +114,10 @@ export default {
 }
 </script>
 <style scoped>
+
 .main-page {
   padding-top: 50px;
+  margin-top: -50px;
 }
 .login {
   background: #ffffff;
