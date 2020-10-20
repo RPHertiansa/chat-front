@@ -3,43 +3,7 @@
     <div class="row">
       <div class="col-lg-3 col-md-3 friendlist d-none d-md-block">
         <div class="container">
-        <b-row>
-          <b-col>
-            <router-link to="/home">
-            <h4 class="font-weight-bold tele-text mt-2">Telegram</h4>
-            </router-link>
-          </b-col>
-          <b-col class="text-right">
-            <div class="btn-group">
-              <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="../assets/img/icon-click-chatlist.png" alt="">
-              </button>
-              <div class="dropdown-menu dropdown-menu-right menu">
-                <button class="dropdown-item text-white" type="button" v-b-toggle.sidebar><b-icon-gear class="mr-4"></b-icon-gear>Settings</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-person class="mr-4"></b-icon-person>Contacts</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-telephone class="mr-4"></b-icon-telephone>Calls</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-bookmark class="mr-4"></b-icon-bookmark>Messages</button>
-                <button class="dropdown-item text-white" type="button" v-b-toggle.add-friend><b-icon-person-plus flip-h class="mr-4"></b-icon-person-plus>Friends</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-question-circle class="mr-4"></b-icon-question-circle>FAQ</button>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
-        <div>
-    </div>
-        <form >
-          <div class="form">
-            <button><b-icon icon="search" variant="secondary"></b-icon></button>
-            <input type="text" class="form-control" placeholder="Search here"/>
-            <button><img src="../assets/img/Plus.png" alt=""></button>
-          </div>
-        </form>
-          <div class="row mx-auto">
-            <button class="btn chat-category mx-auto"> All </button>
-            <button class="btn chat-category mx-auto"> Important</button>
-            <button class="btn chat-category mx-auto"> Unread </button>
-          </div>
-
+        <HeadMenu/>
         <hr>
           <div class="list-contact" v-for="(item, index) in friendList" :key="index">
             <div class="pointer form-inline" @click="selectUser(item.name, item.image, item.iduser)">
@@ -54,70 +18,12 @@
       </div>
       <b-sidebar id="sidebar">
         <div class="p-4">
-          <div class="text-center">
-            <h4 class="tele-text mt-0 mb-3">{{userDetail.data.username}}</h4>
-            <img class="prof-pic" :src="`${url}${userDetail.data.image}`" alt="">
-            <div>
-              <h4 class="mb-0">{{userDetail.data.name}}</h4>
-            </div>
-            <div>
-              <p class="text-muted mt-0">@{{userDetail.data.username}}</p>
-            </div>
-          </div>
-          <div class="text-left">
-            <h4 class="font-weight-bold">Account <b-icon-pencil v-b-modal.update-prof class="tele-text text-right"></b-icon-pencil></h4>
-            <div>
-              <p class="text-muted mb-0">Phone number</p>
-              <p>{{userDetail.data.phonenumber}}</p>
-            </div>
-            <div>
-              <p class="text-muted mb-0">Bio</p>
-              <p>{{userDetail.data.bio}}</p>
-            </div>
-          </div>
-          <b-modal id="update-prof" title="Edit Profile" hide-footer>
-            <form @submit.prevent="updateProfile">
-              <div>
-                <div class="form">
-                  <input class="form form-control" type="text" placeholder="Phone number" v-model="phonenumber"/>
-                </div>
-                <div class="form">
-                  <input class="form form-control" type="text" placeholder="Bio" v-model="bio"/>
-                </div>
-                <input type="file" @change="processFile($event)" class="form-control-file form" id="exampleFormControlFile1" placeholder="Upload profile picture"/>
-                <div class="form">
-                </div>
-              </div>
-              <div class="text-right">
-                <b-button type="button" class="tele-btn-cancel" @click="$bvModal.hide('update-prof')">Close</b-button>
-                <b-button type="submit" class="ml-3 tele-btn">Submit</b-button>
-              </div>
-            </form>
-          </b-modal>
-          <div class="text-left">
-              <h4 class="font-weight-bold mb-2">Settings</h4>
-              <div class="tele-text">
-                  <div><p><b-icon-bell scale="1.5" class="mr-3"></b-icon-bell>Notification and Sounds</p></div>
-                  <div><p><b-icon-lock scale="1.5" class="mr-3"></b-icon-lock>Privacy and Security</p></div>
-                  <div><p><b-icon-graph-up scale="1.5" class="mr-3"></b-icon-graph-up>Data and Storage</p></div>
-                  <div><p><b-icon-chat-left-text scale="1.5" class="mr-3"></b-icon-chat-left-text>Chat Settings</p></div>
-                  <div><p><b-icon-laptop scale="1.5" class="mr-3"></b-icon-laptop>Devices</p></div>
-                  <div class="pointer" @click="onLogout()"><p><b-icon-power scale="1.5" class="mr-3"></b-icon-power>Logout</p></div>
-              </div>
-          </div>
+          <MyProfile/>
+          <Settings/>
         </div>
       </b-sidebar>
-
-      <b-sidebar id="add-friend" shadow>
-        <div class="px-3 py-2">
-          <h3 class="tele-text">Add Friend</h3>
-          <form @submit.prevent="addFriend">
-            <div class="form">
-              <input type="text" class="form-control" v-model="friends" placeholder="insert username"/>
-            </div>
-          </form>
-        </div>
-      </b-sidebar>
+      <UpdateProfile/>
+      <AddFriend/>
       <b-sidebar id="friend-prof" right shadow>
         <div class="p-4">
           <div class="text-center">
@@ -146,7 +52,7 @@
       <div class="col-lg-9 col-md-9 d-none d-md-block">
         <div>
           <div v-if="receiver === null">
-            <p class="text-muted empty-chat">Please select a user to start chatting</p>
+            <p class="text-muted text-center empty-chat">Please select a user to start chatting</p>
           </div>
           <div v-else >
             <div class="receiver-info form-inline" >
@@ -190,43 +96,9 @@
           </div>
         </div>
       </div>
-      <div>
+      <div> <!-- responsif -->
         <div class="container friendlist d-sm-none d-block">
-        <b-row>
-          <b-col>
-            <router-link to="/home">
-            <h4 class="font-weight-bold tele-text mt-2">Telegram</h4>
-            </router-link>
-          </b-col>
-          <b-col class="text-right">
-            <div class="btn-group">
-              <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="../assets/img/icon-click-chatlist.png" alt="">
-              </button>
-              <div class="dropdown-menu dropdown-menu-right menu">
-                <button class="dropdown-item text-white" type="button" v-b-toggle.sidebar><b-icon-gear class="mr-4"></b-icon-gear>Settings</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-person class="mr-4"></b-icon-person>Contacts</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-telephone class="mr-4"></b-icon-telephone>Calls</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-bookmark class="mr-4"></b-icon-bookmark>Messages</button>
-                <button class="dropdown-item text-white" type="button" v-b-toggle.add-friend><b-icon-person-plus flip-h class="mr-4"></b-icon-person-plus>Friends</button>
-                <button class="dropdown-item text-white" type="button"><b-icon-question-circle class="mr-4"></b-icon-question-circle>FAQ</button>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
-
-        <form >
-          <div class="form">
-            <button><b-icon icon="search" variant="secondary"></b-icon></button>
-            <input type="text" class="form-control" placeholder="Search here"/>
-            <button><img src="../assets/img/Plus.png" alt=""></button>
-          </div>
-        </form>
-          <div class="row mx-auto">
-            <button class="btn chat-category mx-auto"> All </button>
-            <button class="btn chat-category mx-auto"> Important</button>
-            <button class="btn chat-category mx-auto"> Unread </button>
-          </div>
+        <HeadMenu/>
 
         <hr>
           <div  class="list-contact" v-for="(item, index) in friendList" :key="index">
@@ -286,12 +158,23 @@
 
 <script>
 import io from 'socket.io-client'
-import Swal from 'sweetalert2'
 import { URL_SOCKET } from '../helpers/env'
 import { mapActions, mapGetters } from 'vuex'
+import UpdateProfile from '../components/UpdateProfile'
+import AddFriend from '../components/AddFriend'
+import Settings from '../components/Settings'
+import MyProfile from '../components/MyProfile'
+import HeadMenu from '../components/HeadMenu'
 
 export default {
   name: 'Home',
+  components: {
+    UpdateProfile,
+    AddFriend,
+    Settings,
+    MyProfile,
+    HeadMenu
+  },
   data () {
     return {
       sender: localStorage.getItem('name'),
@@ -306,35 +189,18 @@ export default {
       listMessage: [],
       historyMsg: [],
       privateChat: [],
-      receivedMsg: null,
-      image: null,
-      name: '',
-      phonenumber: '',
-      bio: '',
-      friends: ''
+      receivedMsg: null
     }
   },
   computed: {
     ...mapGetters({
-      userDetail: 'user/userDetail',
       friendDetail: 'user/friendDetail'
     })
   },
   methods: {
-    processFile (event) {
-      this.image = event.target.files[0]
-    },
     ...mapActions({
-      actionGetDetail: 'user/getDetail',
-      actionFriendsDetail: 'user/getFriendsDetail',
-      actionUpdate: 'user/update',
-      actionAddFriends: 'user/addFriends',
-      actionLogout: 'user/onLogout'
+      actionFriendsDetail: 'user/getFriendsDetail'
     }),
-    onLogout () {
-      this.actionLogout()
-      window.location = '/login'
-    },
     async selectUser (user, image, id) {
       this.receiver = user
       this.receiverImg = image
@@ -381,83 +247,9 @@ export default {
         }
       })
       this.privateChat = privateChats
-    },
-    updateProfile () {
-      const image = this.image === null ? this.userDetail.data.image : this.image
-      const phonenumber = this.phonenumber === null ? this.userDetail.data.phonenumber : this.phonenumber
-      const bio = this.bio === null ? this.userDetail.data.bio : this.bio
-      const fd = new FormData()
-      fd.append('image', image)
-      fd.append('phonenumber', phonenumber)
-      fd.append('bio', bio)
-      this.actionUpdate(fd)
-        .then((result) => {
-          console.log(result)
-          if (result === 'Image size is too big! Please upload another one with size <5mb') {
-            Swal.fire({
-              icon: 'error',
-              title: 'Image size is too big!',
-              text: 'Please upload another one with size <5mb'
-            })
-          } else if (result === 'Image type must be JPG or JPEG') {
-            Swal.fire({
-              icon: 'error',
-              title: 'Incorrect file type!',
-              text: 'Image type must be JPG or JPEG'
-            })
-          } else {
-            Swal.fire({
-              icon: 'success',
-              title: 'Your profile is updated!',
-              text: 'You have successfully updated your profile'
-            })
-            window.location = '/home'
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          Swal.fire({
-            icon: 'error',
-            title: 'Something went wrong'
-          })
-        })
-    },
-    addFriend () {
-      const data = {
-        users: this.username,
-        friend: this.friends
-      }
-      this.actionAddFriends(data)
-        .then((result) => {
-          if (result === 'Error: Cannot add or update a child row: a foreign key constraint fails (`telegram`.`friends`, CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`friend`) REFERENCES `users` (`username`))') {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Username does not exist',
-              text: 'Please check the username again!'
-            })
-          } else if (result === 'Friend is added') {
-            Swal.fire({
-              icon: 'success',
-              title: 'Add Friend Success!',
-              text: `${this.friends} is added to your friends list`
-            })
-            window.location = '/home'
-          } else {
-            Swal.fire({
-              icon: 'Error',
-              title: 'Something Wrong'
-            })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     }
-
   },
   mounted () {
-    this.actionGetDetail()
-
     this.socket.emit('get-all-friends', { username: this.username })
     this.socket.on('friendList', (payload) => {
       this.friendList = payload
@@ -479,16 +271,6 @@ export default {
 .container-fluid{
   margin-top: -60px;
 }
-.menu {
-  background-color:  #7E98DF;
-  color: #FAFAFA !important;
-  border-radius: 35px 10px 35px 35px;
-}
-.dropdown-item:hover{
-  color:  #7E98DF !important;
-  background-color: #FAFAFA !important;
-  border-radius: 35px 35x 35px 35px;
-}
 .chat-page {
   margin-left: -15px;
 }
@@ -498,7 +280,7 @@ export default {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 10px;
-  height: 650px;
+  height: 720px;
   overflow: auto;
 }
 .receiver-info {
@@ -508,7 +290,7 @@ export default {
 .chat-room {
   border-bottom: 1px solid #ddd;
   background-color:#F6F6F6;
-  height: 500px;
+  height: 570px;
   overflow: auto;
 }
 input[type="text"] {
@@ -523,12 +305,6 @@ input[type="text"]:focus {
   background-color: transparent;
   -webkit-box-shadow: none;
   box-shadow: none;
-}
-.form {
-  display: flex;
-  background-color: #f3efef;
-  border-radius: 20px;
-  margin: 10px 0;
 }
 .form {
   display: flex;
@@ -552,12 +328,6 @@ input[type="text"]:focus {
   background: #f3efef !important;
   color: #7E98DF !important;
 }
-.chat-category:active, .chat-category:hover {
-  background-color:  #7E98DF;
-  color: #fff !important;
-  border-radius: 15px;
-}
-
 .pointer {
   cursor: pointer;
 }
@@ -582,6 +352,6 @@ input[type="text"]:focus {
 }
 .empty-chat {
   background-color: #F6F6F6;
-  padding:310px 0px;
+  padding:350px 0px;
 }
 </style>

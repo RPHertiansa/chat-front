@@ -10,5 +10,7 @@
   font-family: 'Rubik', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin-top: 60px;
+  font-size: 18px;
 }
 </style>
